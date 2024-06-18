@@ -1,0 +1,60 @@
+The analysis is performed using a pre-trained language model from Hugging Face's Transformers library.
+
+Table of Contents
+Introduction
+Dataset
+Model
+Installation
+Usage
+Results
+
+Introduction
+The aim of this project is to automatically determine the sentiment of maritime news articles. Sentiment analysis is performed using the distilbert-base-uncased-finetuned-sst-2-english model, a fine-tuned version of DistilBERT for sentiment classification tasks.
+
+Dataset
+The dataset used in this project is a CSV file containing maritime news articles. The CSV file should have a column named Content which contains the text of the news articles.
+
+Model
+The sentiment analysis is performed using the distilbert-base-uncased-finetuned-sst-2-english model from Hugging Face. This model is a smaller, faster, and cheaper version of BERT (Bidirectional Encoder Representations from Transformers) and has been fine-tuned on the Stanford Sentiment Treebank (SST-2) dataset.
+
+Installation
+To run this project, you need to have Python installed along with the necessary libraries. You can install the required libraries using the following command:
+
+bash
+Copy code
+pip install pandas transformers torch
+Usage
+Follow the steps below to perform sentiment analysis on your maritime news articles:
+
+Clone this repository.
+Place your maritime news CSV file (e.g., maritime_news.csv) in the project directory.
+Run the following Python script:
+python
+Copy code
+import pandas as pd
+from transformers import pipeline
+
+# Load the CSV file
+csv_file = 'maritime_news.csv'  # Replace with your CSV file path
+df = pd.read_csv(csv_file)
+
+# Initialize the pre-trained sentiment analysis model
+sentiment_pipeline = pipeline('sentiment-analysis', model='distilbert-base-uncased-finetuned-sst-2-english')
+
+# Define a function to get sentiment for each news article
+def get_sentiment(text):
+    result = sentiment_pipeline(text[:512])  # Limiting text to 512 tokens as the model's input limit
+    return result[0]['label']
+
+# Apply the sentiment analysis function to the 'Content' column
+df['Sentiment'] = df['Content'].apply(get_sentiment)
+
+# Save the dataframe with sentiments to a new CSV file
+output_csv_file = 'maritime_news_with_sentiment.csv'
+df.to_csv(output_csv_file, index=False)
+
+print(f'Sentiment analysis results saved to {output_csv_file}')
+The results will be saved to a new CSV file named maritime_news_with_sentiment.csv.
+
+Results
+The output CSV file will contain the original content of the news articles along with an additional column named Sentiment which indicates whether the sentiment of each article is positive or negative.
